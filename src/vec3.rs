@@ -126,3 +126,9 @@ impl std::ops::Div<f32> for Vec3 {
     }
 
 }
+
+impl Default for Vec3 {
+    fn default() -> Self {
+        Vec3(0.0, 0.0, 0.0)
+    }
+}
