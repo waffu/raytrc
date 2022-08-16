@@ -1,10 +1,8 @@
 #[derive(Debug, Clone, Copy)]
 pub struct Vec3(f32, f32, f32);
 
-#[allow(dead_code)]
-type Point3 = Vec3;
-#[allow(dead_code)]
-type Rgb = Vec3;
+pub type Point3 = Vec3;
+pub type Rgb = Vec3;
 
 impl Vec3 {
 

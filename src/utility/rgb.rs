@@ -1,6 +1,4 @@
-use crate::vec3::Vec3;
-
-pub type Rgb = Vec3;
+use crate::utility::vec3::Rgb;
 
 pub fn write_color(out: &mut dyn std::io::Write, color: Rgb) {
     let ir = (255.999 * color.x()) as i32;
