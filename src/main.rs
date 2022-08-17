@@ -4,6 +4,8 @@ use raytracer::{utility::{vec3::*, rgb::write_color, camera::Camera}, hittables:
 use raytracer::utility::ray::Ray;
 use raytracer::hittables::Hittable;
 use raytracer::hittables::sphere::Sphere;
+use rayon::iter::ParallelIterator;
+use rayon::iter::IntoParallelIterator;
 
 
 // use raytracer::{rgb::{write_color, Rgb}, vec3::Vec3, point3::Point3};
@@ -18,6 +20,7 @@ fn main() -> Result<()> {
     let image_width = 500;
     let image_height = (image_width as f32 / aspect_ratio) as i32;
     let samples_per_pixel = 100;
+    let max_depth = 50;
 
     // world
     let mut world: Vec<Hittables> = Vec::new();
@@ -42,12 +45,12 @@ fn main() -> Result<()> {
 
 
             for _ in 0..samples_per_pixel {
-                let u: f32 = (i as f32 + rng.gen_range(0.0..1.0)) / (image_width) as f32;
-                let v: f32 = (j as f32 + rng.gen_range(0.0..1.0)) / (image_height) as f32;
+                let u: f32 = (i as f32 + rng.gen_range(0.0..1.0)) / (image_width as f32);
+                let v: f32 = (j as f32 + rng.gen_range(0.0..1.0)) / (image_height as f32);
 
                 let ray: Ray = cam.get_ray(u, v);
 
-                pixel_colour = pixel_colour + ray_color(ray, &world);
+                pixel_colour = pixel_colour + ray_color(ray, &world, max_depth);
 
             };
 
@@ -59,12 +62,17 @@ fn main() -> Result<()> {
 
 }
 
-pub fn ray_color(ray: Ray, world: &Vec<Hittables>) -> Rgb {
+pub fn ray_color(ray: Ray, world: &Vec<Hittables>, depth: i32) -> Rgb {
     let mut rec: HitRecord = HitRecord::new();
 
+    if depth <= 0 {
+        return Rgb::new(0.0, 0.0, 0.0);
+    }
+
     for object in world.iter() {
-        if object.hit(ray, 0.0, f32::MAX, &mut rec) {
-            return (rec.normal + Rgb::new(1.0, 1.0, 1.0)) * 0.5;
+        if object.hit(ray, 0.001, f32::MAX, &mut rec) {
+            let target: Point3 = rec.p + rec.normal + Vec3::random_in_unit_sphere();
+            return ray_color(Ray::new(rec.p, target - rec.p), world, depth-1) * 0.5;
         }
     }
     let unit_direction: Vec3 = ray.direction().unit_vector();

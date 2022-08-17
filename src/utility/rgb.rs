@@ -8,9 +8,9 @@ pub fn write_color(out: &mut dyn std::io::Write, color: Rgb, samples_per_pixel: 
 
     let scale = 1.0 / samples_per_pixel as f32;
 
-    r *= scale;
-    g *= scale;
-    b *= scale;
+    r = f32::sqrt(scale * r);
+    g = f32::sqrt(scale * g);
+    b = f32::sqrt(scale * b);
 
     let ir = (256 as f32 * clamp(r, 0.0, 0.999)) as i32;
     let ig = (256 as f32 * clamp(g, 0.0, 0.999)) as i32;

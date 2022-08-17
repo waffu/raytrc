@@ -1,3 +1,5 @@
+use rand::Rng;
+
 #[derive(Debug, Clone, Copy)]
 pub struct Vec3(f32, f32, f32);
 
@@ -56,6 +58,34 @@ impl Vec3 {
 
     pub fn unit_vector(self) -> Self {
         self.clone() / self.len()
+    }
+
+    pub fn rand() -> Self {
+        let mut rng = rand::thread_rng();
+
+        Vec3 (
+            rng.gen_range(0.0..1.0),
+            rng.gen_range(0.0..1.0),
+            rng.gen_range(0.0..1.0),
+        )
+    }
+
+    pub fn random(min: f32, max: f32) -> Self {
+        let mut rng = rand::thread_rng();
+
+        Vec3 (
+            rng.gen_range(min..max),
+            rng.gen_range(min..max),
+            rng.gen_range(min..max),
+        )
+    }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Vec3::random(-1.0,1.0);
+            if p.len_sqr() >= 1.0 { continue };
+            return p;
+        }
     }
 }
 
