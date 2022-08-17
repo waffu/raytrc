@@ -1,5 +1,6 @@
 use std::{io::{stdout, Result}};
-use raytracer::{utility::{vec3::*, rgb::write_color}, hittables::{hittables::Hittables, hit_record::HitRecord}};
+use rand::Rng;
+use raytracer::{utility::{vec3::*, rgb::write_color, camera::Camera}, hittables::{hittables::Hittables, hit_record::HitRecord}};
 use raytracer::utility::ray::Ray;
 use raytracer::hittables::Hittable;
 use raytracer::hittables::sphere::Sphere;
@@ -9,10 +10,14 @@ use raytracer::hittables::sphere::Sphere;
 // use raytracer::ray::Ray;
 
 fn main() -> Result<()> {
+
+    let mut rng = rand::thread_rng();
+
     // image
     let aspect_ratio: f32 = 16.0 / 9.0;
     let image_width = 500;
     let image_height = (image_width as f32 / aspect_ratio) as i32;
+    let samples_per_pixel = 100;
 
     // world
     let mut world: Vec<Hittables> = Vec::new();
@@ -22,17 +27,8 @@ fn main() -> Result<()> {
     world.push(Hittables::Sphere(sph));
     world.push(Hittables::Sphere(sph2));
     
-
     // camera
-    let viewport_height: f32 = 2.0;
-    let viewport_width: f32 = aspect_ratio * viewport_height;
-    let focal_length = 1.0;
-
-    // camera vecs
-    let origin = Point3::new(0.0, 0.0, 0.0);
-    let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner = origin - horizontal/2.0 - vertical/2.0 - Vec3::new(0.0, 0.0, focal_length);
+    let cam = Camera::new();
 
 
 
@@ -42,13 +38,20 @@ fn main() -> Result<()> {
         eprintln!("\rscanlines remaining: {}", j);
         for i in 0..image_width {
 
-            // ratio of current pos
-            let u: f32 = (i as f32) / (image_width) as f32;
-            let v: f32 = (j as f32) / (image_height) as f32;
+            let mut pixel_colour: Rgb = Rgb::new(0.0, 0.0, 0.0);
 
-            let ray = Ray::new(origin, lower_left_corner + horizontal*u + vertical*v - origin);
 
-            write_color(&mut stdout(), ray_color(ray, &world));
+            for _ in 0..samples_per_pixel {
+                let u: f32 = (i as f32 + rng.gen_range(0.0..1.0)) / (image_width) as f32;
+                let v: f32 = (j as f32 + rng.gen_range(0.0..1.0)) / (image_height) as f32;
+
+                let ray: Ray = cam.get_ray(u, v);
+
+                pixel_colour = pixel_colour + ray_color(ray, &world);
+
+            };
+
+            write_color(&mut stdout(), pixel_colour, samples_per_pixel);
         } 
     }
 
@@ -61,7 +64,7 @@ pub fn ray_color(ray: Ray, world: &Vec<Hittables>) -> Rgb {
 
     for object in world.iter() {
         if object.hit(ray, 0.0, f32::MAX, &mut rec) {
-            return rec.normal + Rgb::new(1.0, 1.0, 1.0) * 0.5;
+            return (rec.normal + Rgb::new(1.0, 1.0, 1.0)) * 0.5;
         }
     }
     let unit_direction: Vec3 = ray.direction().unit_vector();
