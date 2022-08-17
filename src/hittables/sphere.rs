@@ -9,7 +9,7 @@ pub struct Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, ray: Ray, t_max: f32, t_min: f32, rec: &mut HitRecord) -> bool {
+    fn hit(&self, ray: Ray, t_min: f32, t_max: f32, rec: &mut HitRecord) -> bool {
         let oc: Vec3 = ray.origin() - self.center;
         let a = ray.direction().len_sqr();
         let half_b = Vec3::dot(oc, ray.direction());

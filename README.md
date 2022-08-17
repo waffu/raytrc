@@ -7,7 +7,7 @@
 
 [] cleanup references and calls to clone
 
-[⌛] project structure, group current modules
+[] project structure, group current modules
 
 [] comment confusing segments of source 
 (hittable implementations, viewport scaling, etc.)

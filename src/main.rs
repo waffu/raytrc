@@ -1,6 +1,8 @@
 use std::{io::{stdout, Result}};
-use raytracer::{utility::{vec3::*, rgb::write_color}};
+use raytracer::{utility::{vec3::*, rgb::write_color}, hittables::{hittables::Hittables, hit_record::HitRecord}};
 use raytracer::utility::ray::Ray;
+use raytracer::hittables::Hittable;
+use raytracer::hittables::sphere::Sphere;
 
 
 // use raytracer::{rgb::{write_color, Rgb}, vec3::Vec3, point3::Point3};
@@ -11,6 +13,15 @@ fn main() -> Result<()> {
     let aspect_ratio: f32 = 16.0 / 9.0;
     let image_width = 500;
     let image_height = (image_width as f32 / aspect_ratio) as i32;
+
+    // world
+    let mut world: Vec<Hittables> = Vec::new();
+    let sph = Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5);
+    let sph2 = Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0);
+    
+    world.push(Hittables::Sphere(sph));
+    world.push(Hittables::Sphere(sph2));
+    
 
     // camera
     let viewport_height: f32 = 2.0;
@@ -37,7 +48,7 @@ fn main() -> Result<()> {
 
             let ray = Ray::new(origin, lower_left_corner + horizontal*u + vertical*v - origin);
 
-            write_color(&mut stdout(), ray_color(ray));
+            write_color(&mut stdout(), ray_color(ray, &world));
         } 
     }
 
@@ -45,27 +56,15 @@ fn main() -> Result<()> {
 
 }
 
-pub fn ray_color(ray: Ray) -> Rgb {
-    let t = hit_sphere(Point3::new(0.0,0.0,-1.0), 0.5, ray);
-    if t > 0.0 {
-        let n = Vec3::unit_vector(ray.at(t) - Vec3::new(0.0, 0.0, -1.0));
-        return Rgb::new(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0) * 0.5;
+pub fn ray_color(ray: Ray, world: &Vec<Hittables>) -> Rgb {
+    let mut rec: HitRecord = HitRecord::new();
+
+    for object in world.iter() {
+        if object.hit(ray, 0.0, f32::MAX, &mut rec) {
+            return rec.normal + Rgb::new(1.0, 1.0, 1.0) * 0.5;
+        }
     }
     let unit_direction: Vec3 = ray.direction().unit_vector();
     let t = 0.5*(unit_direction.y() + 1.0);
     Rgb::new(1.0, 1.0, 1.0)*(1.0-t) + Rgb::new(0.5, 0.7, 1.0)*t
 } 
-
-pub fn hit_sphere(center: Point3, radius: f32, ray: Ray) -> f32 {
-    let oc: Vec3 = ray.origin() - center;
-    
-    let a = ray.direction().len_sqr();
-    let half_b = Vec3::dot(oc, ray.direction());
-    let c = oc.len_sqr() - (radius*radius);
-    let discriminant = half_b*half_b - a*c;
-    if discriminant < 0.0 {
-        return - 1.0;
-    } else {
-        return (-half_b - f32::sqrt(discriminant) ) / a;
-    }
-}
