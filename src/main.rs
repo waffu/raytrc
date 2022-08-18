@@ -1,11 +1,12 @@
 use image::RgbImage;
+use log::info;
 use rand::Rng;
 use rayon::prelude::IntoParallelIterator;
-use raytracer::hittables::sphere::Sphere;
-use raytracer::hittables::Hittable;
-use raytracer::utility::ray::Ray;
-use raytracer::utility::rgb::write_pixel;
-use raytracer::{
+use waytracer::hittables::sphere::Sphere;
+use waytracer::hittables::Hittable;
+use waytracer::utility::ray::Ray;
+use waytracer::utility::rgb::write_pixel;
+use waytracer::{
     hittables::{hit_record::HitRecord, hittables::Hittables},
     utility::{camera::Camera, vec3::*},
 };
@@ -15,12 +16,14 @@ use image::imageops::flip_vertical_in_place;
 
 fn main() -> Result<()> {
 
+    env_logger::Builder::new().filter_level(log::LevelFilter::Trace).init();
+
     // image
     let aspect_ratio: f32 = 16.0 / 9.0;
-    let image_width = 500;
+    let image_width = 100;
     let image_height = (image_width as f32 / aspect_ratio) as u32;
-    let samples_per_pixel = 500;
-    let max_depth = 100;
+    let samples_per_pixel = 1000;
+    let max_depth = 50;
 
     let mut buffer = RgbImage::new(image_width, image_height);
 
@@ -35,10 +38,18 @@ fn main() -> Result<()> {
     // camera
     let camera = Camera::new();
 
-    println!("P3\n{} {}\n255", image_width, image_height);
+    // log info
+    info!("starting render...");
+    info!("dimensions: {} {}", image_width, image_height);
+    info!("samples per pixel: {}", samples_per_pixel);
+    info!("maximum ray depth: {}", max_depth);
+    info!("with {} objects", world.len());
 
     for j in (0..image_height).rev() {
-        eprintln!("\rscanlines remaining: {}", j);
+        // Might slow down render a tiny bit but I like the output :)
+        if j % 20 == 0 {
+            info!("scanlines remaining: {}", j);
+        }
         for i in 0..image_width {
 
             let pixel_colour: Rgb = (0..samples_per_pixel).into_par_iter().map(|_| {
@@ -57,11 +68,13 @@ fn main() -> Result<()> {
         }
     }
 
+    info!("image saved in buffer");
+
     // Flip image buffer to account for rays starting at bottom left corner.
     flip_vertical_in_place(&mut buffer);
 
     match buffer.save_with_format("img.png", image::ImageFormat::Png) {
-        Ok(_) => println!("image rendered"),
+        Ok(_) => info!("image written to file"),
         Err(e) => println!("{:?}", e)
     }
 
