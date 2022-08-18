@@ -1,23 +1,28 @@
+use image::RgbImage;
 use rand::Rng;
 use rayon::prelude::IntoParallelIterator;
 use raytracer::hittables::sphere::Sphere;
 use raytracer::hittables::Hittable;
 use raytracer::utility::ray::Ray;
+use raytracer::utility::rgb::write_pixel;
 use raytracer::{
     hittables::{hit_record::HitRecord, hittables::Hittables},
-    utility::{camera::Camera, rgb::write_color, vec3::*},
+    utility::{camera::Camera, vec3::*},
 };
-use std::io::{stdout, Result};
+use std::io::{Result};
 use rayon::iter::ParallelIterator;
+use image::imageops::flip_vertical_in_place;
 
 fn main() -> Result<()> {
 
     // image
     let aspect_ratio: f32 = 16.0 / 9.0;
     let image_width = 500;
-    let image_height = (image_width as f32 / aspect_ratio) as i32;
+    let image_height = (image_width as f32 / aspect_ratio) as u32;
     let samples_per_pixel = 500;
     let max_depth = 100;
+
+    let mut buffer = RgbImage::new(image_width, image_height);
 
     // world
     let mut world: Vec<Hittables> = Vec::new();
@@ -48,8 +53,16 @@ fn main() -> Result<()> {
 
             }).sum();
 
-            write_color(&mut stdout(), pixel_colour, samples_per_pixel);
+            write_pixel(&mut buffer, i, j, pixel_colour, samples_per_pixel);
         }
+    }
+
+    // Flip image buffer to account for rays starting at bottom left corner.
+    flip_vertical_in_place(&mut buffer);
+
+    match buffer.save_with_format("img.png", image::ImageFormat::Png) {
+        Ok(_) => println!("image rendered"),
+        Err(e) => println!("{:?}", e)
     }
 
     Ok(())
