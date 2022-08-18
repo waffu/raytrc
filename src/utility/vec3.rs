@@ -7,7 +7,6 @@ pub type Point3 = Vec3;
 pub type Rgb = Vec3;
 
 impl Vec3 {
-
     // create a new vec3 tuple
     pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
         Vec3(x, y, z)
@@ -30,9 +29,7 @@ impl Vec3 {
 
     // square root of a vec3
     pub fn len_sqr(&self) -> f32 {
-        (self.x() * self.x()) +
-        (self.y() * self.y()) +
-        (self.z() * self.z()) 
+        (self.x() * self.x()) + (self.y() * self.y()) + (self.z() * self.z())
     }
 
     // length of a vec3
@@ -42,18 +39,12 @@ impl Vec3 {
 
     // dot product of a vec3
     pub fn dot(self, v: Vec3) -> f32 {
-        (v.x() * self.x()) +
-        (v.y() * self.y()) +
-        (v.z() * self.z()) 
+        (v.x() * self.x()) + (v.y() * self.y()) + (v.z() * self.z())
     }
 
     // change sign of vector
     pub fn negative(self) -> Self {
-        Vec3(
-            self.x() * -1.0,
-            self.y() * -1.0,
-            self.z() * -1.0,
-        )
+        Vec3(self.x() * -1.0, self.y() * -1.0, self.z() * -1.0)
     }
 
     pub fn unit_vector(self) -> Self {
@@ -63,7 +54,7 @@ impl Vec3 {
     pub fn rand() -> Self {
         let mut rng = rand::thread_rng();
 
-        Vec3 (
+        Vec3(
             rng.gen_range(0.0..1.0),
             rng.gen_range(0.0..1.0),
             rng.gen_range(0.0..1.0),
@@ -73,7 +64,7 @@ impl Vec3 {
     pub fn random(min: f32, max: f32) -> Self {
         let mut rng = rand::thread_rng();
 
-        Vec3 (
+        Vec3(
             rng.gen_range(min..max),
             rng.gen_range(min..max),
             rng.gen_range(min..max),
@@ -82,8 +73,10 @@ impl Vec3 {
 
     pub fn random_in_unit_sphere() -> Vec3 {
         loop {
-            let p = Vec3::random(-1.0,1.0);
-            if p.len_sqr() >= 1.0 { continue };
+            let p = Vec3::random(-1.0, 1.0);
+            if p.len_sqr() >= 1.0 {
+                continue;
+            };
             return p;
         }
     }
@@ -93,12 +86,8 @@ impl Vec3 {
 impl std::ops::Add for Vec3 {
     type Output = Self;
 
-    fn add (self, rhs: Self) -> Self {
-        Vec3(
-        self.x() + rhs.x(),
-        self.y() + rhs.y(),
-        self.z() + rhs.z(),
-        )
+    fn add(self, rhs: Self) -> Self {
+        Vec3(self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z())
     }
 }
 
@@ -107,11 +96,7 @@ impl std::ops::Sub for Vec3 {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self {
-        Vec3(
-            self.x() - rhs.x(),
-            self.y() - rhs.y(),
-            self.z() - rhs.z(),
-        )
+        Vec3(self.x() - rhs.x(), self.y() - rhs.y(), self.z() - rhs.z())
     }
 }
 
@@ -120,11 +105,7 @@ impl std::ops::Mul<f32> for Vec3 {
     type Output = Self;
 
     fn mul(self, rhs: f32) -> Self {
-        Vec3(
-        self.x() * rhs,
-        self.y() * rhs,
-        self.z() * rhs,
-        )
+        Vec3(self.x() * rhs, self.y() * rhs, self.z() * rhs)
     }
 }
 
@@ -133,11 +114,7 @@ impl std::ops::Mul for Vec3 {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self {
-        Vec3(
-            self.x() * rhs.x(),
-            self.y() * rhs.y(),
-            self.z() * rhs.z(),
-        )
+        Vec3(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z())
     }
 }
 
@@ -146,13 +123,8 @@ impl std::ops::Div<f32> for Vec3 {
     type Output = Self;
 
     fn div(self, rhs: f32) -> Self {
-        Vec3(
-            self.x() / rhs,
-            self.y() / rhs,
-            self.z() / rhs,
-        )
+        Vec3(self.x() / rhs, self.y() / rhs, self.z() / rhs)
     }
-
 }
 
 impl Default for Vec3 {

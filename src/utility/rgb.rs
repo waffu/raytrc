@@ -1,7 +1,6 @@
 use crate::utility::vec3::Rgb;
 
 pub fn write_color(out: &mut dyn std::io::Write, color: Rgb, samples_per_pixel: i32) {
-
     let mut r = color.x();
     let mut g = color.y();
     let mut b = color.z();
@@ -21,8 +20,11 @@ pub fn write_color(out: &mut dyn std::io::Write, color: Rgb, samples_per_pixel: 
 }
 
 pub fn clamp(x: f32, min: f32, max: f32) -> f32 {
-    if x < min { return min; };
-    if x > max { return max; };
+    if x < min {
+        return min;
+    };
+    if x > max {
+        return max;
+    };
     return x;
-
 }
