@@ -1,15 +1,6 @@
 # raytrc
 ### CPU Raytracer built in Rust
 
-### TODO for 15/08/2022
+Port of Peter Shirley's C++ Raytracer
 
-[] cleanup api, make it ergonomic (perhaps study other apis)
-
-[] cleanup references and calls to clone
-
-[] project structure, group current modules
-
-[] comment confusing segments of source 
-(hittable implementations, viewport scaling, etc.)
-
-[] rust doc markdown in lib
+![image](https://user-images.githubusercontent.com/30193673/185040503-e690818b-7927-4872-af8f-56a8955a71be.png)
