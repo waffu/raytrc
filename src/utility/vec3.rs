@@ -132,3 +132,14 @@ impl Default for Vec3 {
         Vec3(0.0, 0.0, 0.0)
     }
 }
+
+impl std::iter::Sum for Vec3 {
+    fn sum<I: Iterator<Item = Vec3>>(iter: I) -> Self {
+
+        let mut a = Vec3::default();
+        for i in iter {
+            a = i + a;
+        }
+        a
+    }
+}
