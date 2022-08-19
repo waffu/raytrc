@@ -1,8 +1,14 @@
-use image::ImageBuffer;
 use crate::utility::vec3::Rgb;
 use image;
+use image::ImageBuffer;
 
-pub fn write_pixel(buffer: &mut ImageBuffer<image::Rgb<u8>, Vec<u8>>, x: u32, y: u32, color: Rgb, samples_per_pixel: i32) {
+pub fn write_pixel(
+    buffer: &mut ImageBuffer<image::Rgb<u8>, Vec<u8>>,
+    x: u32,
+    y: u32,
+    color: Rgb,
+    samples_per_pixel: i32,
+) {
     let mut r = color.x();
     let mut g = color.y();
     let mut b = color.z();

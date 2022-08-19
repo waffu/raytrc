@@ -9,3 +9,7 @@ Modify the image parameters, samples per pixel or ray depth in main.rs to your l
 
 to generate the render 'img.png' in the project directory.
 
+# Preview
+
+![A Render](img.png "Render")
+

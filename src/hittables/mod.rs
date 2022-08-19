@@ -1,5 +1,6 @@
 pub mod hit_record;
 pub mod hittables;
+pub mod material;
 pub mod sphere;
 
 use crate::utility::ray::Ray;

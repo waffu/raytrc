@@ -1,11 +1,13 @@
+use super::material::Materials;
 use super::{hit_record::HitRecord, Hittable};
 use crate::utility::ray::Ray;
 use crate::utility::vec3::{Point3, Vec3};
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct Sphere {
     center: Point3,
     radius: f32,
+    material: Materials,
 }
 
 impl Hittable for Sphere {
@@ -31,8 +33,11 @@ impl Hittable for Sphere {
             }
         }
 
+        // Modify the HitRecord mutable reference to reflect the values of the current
+        // sphere intersection along with the material of the current sphere.
         rec.t = root;
         rec.point = ray.at(rec.t);
+        rec.mat = self.material.clone();
         let outward_normal: Vec3 = (rec.point - self.center) / self.radius;
         rec.set_face_normal(ray, outward_normal);
 
@@ -41,7 +46,11 @@ impl Hittable for Sphere {
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f32) -> Sphere {
-        Sphere { center, radius }
+    pub fn new(center: Point3, radius: f32, material: Materials) -> Sphere {
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 }

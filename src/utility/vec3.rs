@@ -80,6 +80,20 @@ impl Vec3 {
             return p;
         }
     }
+
+    pub fn random_unit_vector() -> Vec3 {
+        Self::unit_vector(Self::random_in_unit_sphere())
+    }
+
+    pub fn near_zero(self) -> bool {
+        let s: f32 = 1e-8;
+
+        (self.x().abs() < s) && (self.y().abs() < s) && (self.z().abs() < s)
+    }
+
+    pub fn reflect(self, n: Vec3) -> Self {
+        self - 2.0 * self.dot(n) * n
+    }
 }
 
 // add vec3 by vec3
@@ -109,6 +123,15 @@ impl std::ops::Mul<f32> for Vec3 {
     }
 }
 
+// mul f32 by vec3
+impl std::ops::Mul<Vec3> for f32 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Vec3(self * rhs.x(), self * rhs.y(), self * rhs.z())
+    }
+}
+
 // mul vec3 by vec3
 impl std::ops::Mul for Vec3 {
     type Output = Self;
@@ -135,7 +158,6 @@ impl Default for Vec3 {
 
 impl std::iter::Sum for Vec3 {
     fn sum<I: Iterator<Item = Vec3>>(iter: I) -> Self {
-
         let mut a = Vec3::default();
         for i in iter {
             a = i + a;
