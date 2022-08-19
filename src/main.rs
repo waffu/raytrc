@@ -131,12 +131,12 @@ pub fn cast_ray(ray: Ray, world: &Vec<Hittables>, depth: i32) -> Rgb {
     }
 }
 
-pub fn get_obj_closest_intersection<'a>(
+pub fn get_obj_closest_intersection(
     ray: Ray,
-    world: &'a Vec<Hittables>
+    world: &Vec<Hittables>
 ) -> Option<HitRecord> {
 
-    let mut temp_rec: Option<HitRecord> = None;
+    let mut temp_rec = None;
     let mut closest_t = f32::MAX;
 
     for object in world.iter() {
