@@ -22,7 +22,7 @@ fn main() -> Result<()> {
 
     // image
     let aspect_ratio: f32 = 16.0 / 9.0;
-    let image_width = 1920;
+    let image_width = 1000;
     let image_height = (image_width as f32 / aspect_ratio) as u32;
     let samples_per_pixel = 500;
     let max_depth = 50;
@@ -48,9 +48,9 @@ fn main() -> Result<()> {
     });
 
     let sph = Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0, material_ground);
-    let sph2 = Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5, material_center);
-    let sph3 = Sphere::new(Point3::new(-1.0, 0.0, -1.0), 0.5, material_left);
-    let sph4 = Sphere::new(Point3::new(1.0, 0.0, -1.0), 0.5, material_right);
+    let sph2 = Sphere::new(Point3::new(0.0, 0.0, -2.0), 0.5, material_center);
+    let sph3 = Sphere::new(Point3::new(-1.0, 0.0, -2.0), 0.5, material_left);
+    let sph4 = Sphere::new(Point3::new(1.0, 0.0, -2.0), 0.5, material_right);
 
     world.push(Hittables::Sphere(sph));
     world.push(Hittables::Sphere(sph2));
@@ -104,19 +104,15 @@ fn main() -> Result<()> {
 }
 
 pub fn cast_ray(ray: Ray, world: &Vec<Hittables>, depth: i32) -> Rgb {
-    let mut rec = HitRecord::new();
 
     // Depth of recursion has been reached, representing a fully absorbed light ray (black shadow).
     if depth <= 0 {
         return Rgb::new(0.0, 0.0, 0.0);
     }
 
-    // TODO: UPDATE THIS, we don't use hitobj so there is no reason to return it, constrain get_obj_closest_intersection to solely updating the HitRecord struct
-    // If get_obj_closest_intersection has a value, create a random point in a unit sphere normal to the hit intersection,
-    // proceed to recursively call 'cast_ray', with the ray originating from the intersection point and directing towards the random point.
-    // Along with this, decrease the depth by 1 and multiply the return value by 0.5 to account for perceived light loss.
-    match get_obj_closest_intersection(ray, world, &mut rec) {
-        Some(_) => {
+    // Produce a HitRecord for the closest intersection for a given ray, calculate RGB based
+    match get_obj_closest_intersection(ray, world) {
+        Some(rec) => {
             let mut scattered = Ray::new(Point3::default(), Vec3::default());
             let mut attenuation = Rgb::default();
             if rec
@@ -127,32 +123,28 @@ pub fn cast_ray(ray: Ray, world: &Vec<Hittables>, depth: i32) -> Rgb {
             }
             return Rgb::new(0.0, 0.0, 0.0);
         }
-
         None => {
             let unit_direction: Vec3 = ray.direction().unit_vector();
             let t = 0.5 * (unit_direction.y() + 1.0);
-            Rgb::new(1.0, 1.0, 1.0) * (1.0 - t) + Rgb::new(0.5, 0.7, 1.0) * t
+            return Rgb::new(1.0, 1.0, 1.0) * (1.0 - t) + Rgb::new(0.5, 0.7, 1.0) * t
         }
     }
 }
 
-// For every enum in 'world', call the hit implementation, routing to the underlying hit implementation for the relevant struct.
-// This will modify the HitRecord 'rec' with details of the intersection. Use the t_max parameter with the updated rec.t field to update 'hit_obj'
-// until it represents the closest intersection.
 pub fn get_obj_closest_intersection<'a>(
     ray: Ray,
-    world: &'a Vec<Hittables>,
-    rec: &mut HitRecord,
-) -> Option<&'a Hittables> {
-    let mut hit_obj: Option<&Hittables> = None;
+    world: &'a Vec<Hittables>
+) -> Option<HitRecord> {
+
+    let mut temp_rec: Option<HitRecord> = None;
     let mut closest_t = f32::MAX;
 
     for object in world.iter() {
-        if object.hit(ray, 0.001, closest_t, rec) {
+        if let Some(rec) = object.hit(ray, 0.001, closest_t) {
             closest_t = rec.t;
-            hit_obj = Some(object);
+            temp_rec = Some(rec);
         }
     }
 
-    hit_obj
+    temp_rec
 }
