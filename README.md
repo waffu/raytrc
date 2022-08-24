@@ -5,15 +5,13 @@ waytracer is a Rust port of the C++ raytracer described in Ray Tracing in One We
 
 To modify and generate the render:
 
-1. Change the render parameters such as ```{dimensions, samples per pixel}``` in ```settings.toml```
+1. Change the render parameters such as ```image_width, samples_per_pixel``` in ```settings.toml```
 
-2. Change the amount and parameters of 3D instances in ```world.json```
+2. Change parameters and amount of of 3D instances in ```world.json```
 
-proceed to build and run the project with 
+3. Proceed to build and run the project with ```cargo run --release```
 
-```cargo run --release```
-
-generating the file ```img.{ext}``` in the project directory.
+4. The render will be generated as ```img.{ext}``` in the project directory.
 
 # Preview
 
