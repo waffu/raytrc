@@ -7,7 +7,7 @@ To modify and generate the render:
 
 1. Change the render parameters such as ```image_width, samples_per_pixel``` in ```settings.toml```
 
-2. Change parameters and amount of of 3D instances in ```world.json```
+2. Change parameters and amount of 3D instances in ```world.json```
 
 3. Proceed to build and run the project with ```cargo run --release```
 
