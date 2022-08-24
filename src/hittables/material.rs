@@ -18,7 +18,6 @@ impl Material for Materials {
     ) -> bool {
         match self {
             Materials::Lambertian(mat) => mat.scatter(ray_in, rec, attenuation, scattered),
-
             Materials::Metal(mat) => mat.scatter(ray_in, rec, attenuation, scattered),
         }
     }

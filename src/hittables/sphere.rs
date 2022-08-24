@@ -24,7 +24,7 @@ impl Hittable for Sphere {
         };
         let sqrtd = f32::sqrt(discriminant);
 
-        // find nearest root in acceptable range
+        // Find nearest root in acceptable range.
         let mut root = (-half_b - sqrtd) / a;
         if root < t_min || t_max < root {
             root = (-half_b + sqrtd) / a;

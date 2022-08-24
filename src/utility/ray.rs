@@ -2,31 +2,45 @@ use crate::hittables::{hittables::Hittables, hit_record::HitRecord, material::Ma
 
 use super::vec3::*;
 
+/// The Ray type representing a light ray
 #[derive(Clone, Copy)]
 pub struct Ray {
+    // The origin of the light ray
     orig: Point3,
     dir: Vec3,
 }
 
 impl Ray {
+
+    /// Create a new Ray from the given origin and direction
     pub fn new(origin: Point3, direction: Vec3) -> Ray {
         Ray {
             orig: origin,
             dir: direction,
         }
     }
+    /// Return the point at a given t value for the Ray
     pub fn at(self, t: f32) -> Point3 {
         self.orig + (self.dir * t)
     }
 
+    /// Return the direction for a Ray
     pub fn direction(self) -> Vec3 {
         self.dir
     }
 
+    /// Return the origin for a Ray
     pub fn origin(self) -> Point3 {
         self.orig
     }
 
+    /// Cast a ray returning an RGB value for the given objects and depth passed
+    /// 
+    /// # Arguments
+    /// 
+    /// * `world` - A reference to a vector of 'Hittables' enums representing in world objects
+    /// * `depth` - The limit of recursion (light bounces) 
+    /// 
     pub fn cast_ray(self, world: &Vec<Hittables>, depth: i32) -> Rgb {
 
         // Depth of recursion has been reached, representing a fully absorbed light ray (black shadow).
@@ -54,9 +68,9 @@ impl Ray {
         }
     }
     
-    // Produce a HitRecord for the closest object intersection for a given ray
-    // by iterating through the objects with decrementing t values according to most recent HitRecord.
-    pub fn get_obj_closest_intersection(
+    // Produce a HitRecord for the closest object intersection for a given ray by
+    // iterating through the objects keeping track of the lowest t value for returned HitRecords.
+    fn get_obj_closest_intersection(
         self,
         world: &Vec<Hittables>
     ) -> Option<HitRecord> {

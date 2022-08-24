@@ -2,6 +2,15 @@ use crate::utility::vec3::Rgb;
 use image;
 use image::ImageBuffer;
 
+/// Write an RGB value for a pixel into an ImageBuffer
+/// 
+/// # Arguments
+/// 
+/// * `buffer` - An ImageBuffer for an RGB image
+/// * `x` - The x value for the pixel to write
+/// * `y` - The y value for the pixel to write 
+/// * `color` - The RGB value to write in the form of a multi-sampled sum
+/// * `samples_per_pixel` - The amount of samples taken for the RGB value
 pub fn write_pixel(
     buffer: &mut ImageBuffer<image::Rgb<u8>, Vec<u8>>,
     x: u32,

@@ -1,28 +1,34 @@
 use rand::Rng;
 
+/// A vector represented as a tuple of three f32 values.
 #[derive(Debug, Clone, Copy)]
 pub struct Vec3(f32, f32, f32);
 
+/// A point represented as a tuple of three f32 values.
 pub type Point3 = Vec3;
+
+/// An RGB colour represented as a tuple of three f32 values.
 pub type Rgb = Vec3;
 
+
 impl Vec3 {
-    // create a new vec3 tuple
+
+    /// Create a new Vec3 struct from three f32 values.
     pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
         Vec3(x, y, z)
     }
 
-    // x of a vec3
+    /// Get the X value of a Vec3.
     pub fn x(&self) -> f32 {
         self.0
     }
 
-    // y of a vec3
+    /// Get the Y value of a Vec3.
     pub fn y(&self) -> f32 {
         self.1
     }
 
-    // z of a vec3
+    /// Get the Z value of a Vec3.
     pub fn z(&self) -> f32 {
         self.2
     }
@@ -32,25 +38,27 @@ impl Vec3 {
         (self.x() * self.x()) + (self.y() * self.y()) + (self.z() * self.z())
     }
 
-    // length of a vec3
+    /// Get the length of a Vec3.
     pub fn len(self) -> f32 {
         f32::sqrt(self.len_sqr())
     }
 
-    // dot product of a vec3
+    /// Get the dot product of a Vec3.
     pub fn dot(self, v: Vec3) -> f32 {
         (v.x() * self.x()) + (v.y() * self.y()) + (v.z() * self.z())
     }
 
-    // change sign of vector
+    /// Change the sign of a Vec3.
     pub fn negative(self) -> Self {
         Vec3(self.x() * -1.0, self.y() * -1.0, self.z() * -1.0)
     }
 
+    /// Get the unit vector of a Vec3.
     pub fn unit_vector(self) -> Self {
         self.clone() / self.len()
     }
 
+    // a
     pub fn rand() -> Self {
         let mut rng = rand::thread_rng();
 
@@ -61,6 +69,7 @@ impl Vec3 {
         )
     }
 
+    /// Generate a random Vec3 using a custom range.
     pub fn random(min: f32, max: f32) -> Self {
         let mut rng = rand::thread_rng();
 
@@ -71,6 +80,8 @@ impl Vec3 {
         )
     }
 
+
+    /// Generate a random vector constrained to a unit sphere.
     pub fn random_in_unit_sphere() -> Vec3 {
         loop {
             let p = Vec3::random(-1.0, 1.0);
@@ -81,6 +92,7 @@ impl Vec3 {
         }
     }
 
+    /// Get a random unit length vector.
     pub fn random_unit_vector() -> Vec3 {
         Self::unit_vector(Self::random_in_unit_sphere())
     }
