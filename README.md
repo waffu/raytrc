@@ -11,7 +11,7 @@ To modify and generate the render:
 
 3. Proceed to build and run the project with ```cargo run --release```
 
-4. The render will be generated as ```img.{ext}``` in the project directory.
+4. The render will be generated as ```img.{ext}``` in the project directory
 
 # Preview
 
