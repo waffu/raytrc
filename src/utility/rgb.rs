@@ -16,7 +16,7 @@ pub fn write_pixel(
     x: u32,
     y: u32,
     color: Rgb,
-    samples_per_pixel: i32,
+    samples_per_pixel: u32,
 ) {
     let mut r = color.x();
     let mut g = color.y();

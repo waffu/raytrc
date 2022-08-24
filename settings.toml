@@ -1,0 +1,9 @@
+# set the rendered image dimensions
+image_width = 1920
+image_height = 1080
+# amount of ray samples to take for a pixel
+samples_per_pixel = 10
+# maximum recursion limit (reflection limit) for a sample
+max_depth = 5
+# supported file types ["jpeg", "png", "ico", "bmp" and "tiff"]
+file_type = "png"

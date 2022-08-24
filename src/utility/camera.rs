@@ -9,9 +9,13 @@ pub struct Camera {
 
 impl Camera {
     pub fn new() -> Self {
-        let aspect_ratio: f32 = 16.0 / 9.0;
-        let viewport_height: f32 = 2.0;
-        let viewport_width: f32 = aspect_ratio * viewport_height;
+
+        // TODO: move these settings into the settings.toml
+
+        let aspect_ratio = 16.0 / 9.0;
+        let viewport_height = 2.0;
+        let viewport_width: f32 = viewport_height * aspect_ratio;
+        
         let focal_length = 1.0;
 
         let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
