@@ -5,13 +5,12 @@ use rand::Rng;
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use std::io::Result;
-use waytracer::hittables::material::{Lambertian, Material, Materials, Metal};
+use waytracer::hittables::material::{Lambertian, Materials, Metal};
 use waytracer::hittables::sphere::Sphere;
-use waytracer::hittables::Hittable;
 use waytracer::utility::ray::Ray;
 use waytracer::utility::rgb::write_pixel;
 use waytracer::{
-    hittables::{hit_record::HitRecord, hittables::Hittables},
+    hittables::hittables::Hittables,
     utility::{camera::Camera, vec3::*},
 };
 
@@ -22,7 +21,7 @@ fn main() -> Result<()> {
 
     // image
     let aspect_ratio: f32 = 16.0 / 9.0;
-    let image_width = 1000;
+    let image_width = 1300;
     let image_height = (image_width as f32 / aspect_ratio) as u32;
     let samples_per_pixel = 500;
     let max_depth = 50;
@@ -72,6 +71,7 @@ fn main() -> Result<()> {
         if j % 20 == 0 {
             info!("scanlines remaining: {}", j);
         }
+        // For every pixel, generate 
         for i in 0..image_width {
             let pixel_colour: Rgb = (0..samples_per_pixel)
                 .into_par_iter()
@@ -82,7 +82,7 @@ fn main() -> Result<()> {
 
                     let ray: Ray = camera.get_ray(u, v);
 
-                    cast_ray(ray, &world, max_depth)
+                    ray.cast_ray(&world, max_depth)
                 })
                 .sum();
 
@@ -101,50 +101,4 @@ fn main() -> Result<()> {
     }
 
     Ok(())
-}
-
-pub fn cast_ray(ray: Ray, world: &Vec<Hittables>, depth: i32) -> Rgb {
-
-    // Depth of recursion has been reached, representing a fully absorbed light ray (black shadow).
-    if depth <= 0 {
-        return Rgb::new(0.0, 0.0, 0.0);
-    }
-
-    // Produce a HitRecord for the closest intersection for a given ray, calculate RGB based
-    match get_obj_closest_intersection(ray, world) {
-        Some(rec) => {
-            let mut scattered = Ray::new(Point3::default(), Vec3::default());
-            let mut attenuation = Rgb::default();
-            if rec
-                .mat
-                .scatter(&ray, rec.clone(), &mut attenuation, &mut scattered)
-            {
-                return attenuation * cast_ray(scattered, world, depth - 1);
-            }
-            return Rgb::new(0.0, 0.0, 0.0);
-        }
-        None => {
-            let unit_direction: Vec3 = ray.direction().unit_vector();
-            let t = 0.5 * (unit_direction.y() + 1.0);
-            return Rgb::new(1.0, 1.0, 1.0) * (1.0 - t) + Rgb::new(0.5, 0.7, 1.0) * t
-        }
-    }
-}
-
-pub fn get_obj_closest_intersection(
-    ray: Ray,
-    world: &Vec<Hittables>
-) -> Option<HitRecord> {
-
-    let mut temp_rec = None;
-    let mut closest_t = f32::MAX;
-
-    for object in world.iter() {
-        if let Some(rec) = object.hit(ray, 0.001, closest_t) {
-            closest_t = rec.t;
-            temp_rec = Some(rec);
-        }
-    }
-
-    temp_rec
 }
