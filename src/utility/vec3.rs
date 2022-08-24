@@ -1,7 +1,8 @@
 use rand::Rng;
+use serde::{Serialize, Deserialize};
 
 /// A vector represented as a tuple of three f32 values.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Vec3(f32, f32, f32);
 
 /// A point represented as a tuple of three f32 values.

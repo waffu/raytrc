@@ -4,9 +4,7 @@ use log::info;
 use rand::Rng;
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
-use std::io::Result;
-use waytracer::hittables::material::{Lambertian, Materials, Metal};
-use waytracer::hittables::sphere::Sphere;
+use std::io::{Result};
 use waytracer::utility::ray::Ray;
 use waytracer::utility::rgb::write_pixel;
 use waytracer::{
@@ -26,52 +24,30 @@ fn main() -> Result<()> {
     let samples_per_pixel = 500;
     let max_depth = 50;
 
+    // Image buffer for rendering
     let mut buffer = RgbImage::new(image_width, image_height);
 
-    // world
-    let mut world: Vec<Hittables> = Vec::new();
+    // Read world from json
+    info!("reading and serializing world.json");
+    let json = std::fs::read_to_string("world.json")?;
+    let world: Vec<Hittables>  = serde_json::from_str(&json)?;
 
-    let material_ground = Materials::Lambertian(Lambertian {
-        albedo: Rgb::new(0.8, 0.8, 0.0),
-    });
-    let material_center = Materials::Lambertian(Lambertian {
-        albedo: Rgb::new(0.7, 0.3, 0.3),
-    });
-    let material_left = Materials::Metal(Metal {
-        albedo: Rgb::new(0.8, 0.8, 0.8),
-        fuzz: 0.3,
-    });
-    let material_right = Materials::Metal(Metal {
-        albedo: Rgb::new(0.8, 0.6, 0.2),
-        fuzz: 1.0,
-    });
-
-    let sph = Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0, material_ground);
-    let sph2 = Sphere::new(Point3::new(0.0, 0.0, -2.0), 0.5, material_center);
-    let sph3 = Sphere::new(Point3::new(-1.0, 0.0, -2.0), 0.5, material_left);
-    let sph4 = Sphere::new(Point3::new(1.0, 0.0, -2.0), 0.5, material_right);
-
-    world.push(Hittables::Sphere(sph));
-    world.push(Hittables::Sphere(sph2));
-    world.push(Hittables::Sphere(sph3));
-    world.push(Hittables::Sphere(sph4));
-
-    // camera
+    // Camera
     let camera = Camera::new();
 
-    // log info
+    // Log info
     info!("starting render...");
-    info!("dimensions: {} {}", image_width, image_height);
+    info!("dimensions: {}, {}", image_width, image_height);
     info!("samples per pixel: {}", samples_per_pixel);
     info!("maximum ray depth: {}", max_depth);
-    info!("with {} objects", world.len());
+    info!("amount of objects: {}", world.len());
 
     for j in (0..image_height).rev() {
         // Might slow down render a tiny bit but I like the output :)
         if j % 20 == 0 {
             info!("scanlines remaining: {}", j);
         }
-        // For every pixel, generate 
+        // For every pixel, generate an RGB value
         for i in 0..image_width {
             let pixel_colour: Rgb = (0..samples_per_pixel)
                 .into_par_iter()
@@ -92,7 +68,7 @@ fn main() -> Result<()> {
 
     info!("image saved in buffer");
 
-    // Flip image buffer to account for rays starting at bottom left corner.
+    // Flip image buffer to account for rays starting at bottom left corner
     flip_vertical_in_place(&mut buffer);
 
     match buffer.save_with_format("img.png", image::ImageFormat::Png) {

@@ -1,8 +1,10 @@
+use serde::{Serialize, Deserialize};
+
 use crate::utility::{ray::Ray, vec3::*};
 
 use super::hit_record::HitRecord;
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub enum Materials {
     Lambertian(Lambertian),
     Metal(Metal),
@@ -34,7 +36,7 @@ pub trait Material {
 }
 
 // Lambertian
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Lambertian {
     pub albedo: Rgb,
 }
@@ -68,7 +70,7 @@ impl Material for Lambertian {
 // End Lambertian
 
 // Metal
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Metal {
     pub albedo: Rgb,
     pub fuzz: f32,

@@ -1,9 +1,11 @@
+use serde::{Serialize, Deserialize};
+
 use super::material::Materials;
 use super::{hit_record::HitRecord, Hittable};
 use crate::utility::ray::Ray;
 use crate::utility::vec3::{Point3, Vec3};
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Sphere {
     center: Point3,
     radius: f32,

@@ -1,8 +1,11 @@
+use serde::{Deserialize, Serialize};
+
 use super::hit_record::HitRecord;
 use super::sphere::Sphere;
 use super::Hittable;
 use crate::utility::ray::Ray;
 
+#[derive(Clone, Serialize, Deserialize)]
 pub enum Hittables {
     Sphere(Sphere),
 }
