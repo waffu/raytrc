@@ -8,7 +8,7 @@ use std::io::{Result};
 use waytracer::utility::ray::Ray;
 use waytracer::utility::rgb::write_pixel;
 use waytracer::{
-    hittables::hittables::Hittables,
+    model::hittables::Hittables,
     utility::{camera::Camera, vec3::*},
 };
 use waytracer::utility::settings::Settings;

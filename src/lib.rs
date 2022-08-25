@@ -1,2 +1,2 @@
-pub mod hittables;
+pub mod model;
 pub mod utility;

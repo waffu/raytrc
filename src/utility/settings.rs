@@ -22,3 +22,9 @@ impl Settings {
         config.try_deserialize::<Settings>().unwrap()
     }
 }
+
+impl Default for Settings {
+    fn default() -> Self {
+        Self::new()
+    }
+}

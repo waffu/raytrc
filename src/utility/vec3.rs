@@ -56,7 +56,7 @@ impl Vec3 {
 
     /// Get the unit vector of a Vec3.
     pub fn unit_vector(self) -> Self {
-        self.clone() / self.len()
+        self / self.len()
     }
 
     // a

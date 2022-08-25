@@ -1,4 +1,4 @@
-use crate::hittables::{hittables::Hittables, hit_record::HitRecord, material::Material, Hittable};
+use crate::model::{hittables::Hittables, hit_record::HitRecord, material::Material, Hittable};
 
 use super::vec3::*;
 
@@ -44,7 +44,7 @@ impl Ray {
     pub fn cast_ray(self, world: &Vec<Hittables>, depth: u32) -> Rgb {
 
         // Depth of recursion has been reached, representing a fully absorbed light ray (black shadow).
-        if depth <= 0 {
+        if depth == 0 {
             return Rgb::new(0.0, 0.0, 0.0);
         }
     
@@ -58,12 +58,12 @@ impl Ray {
                 {
                     return attenuation * scattered.cast_ray(world, depth - 1);
                 }
-                return Rgb::new(0.0, 0.0, 0.0);
+                Rgb::new(0.0, 0.0, 0.0)
             }
             None => {
                 let unit_direction: Vec3 = self.direction().unit_vector();
                 let t = 0.5 * (unit_direction.y() + 1.0);
-                return Rgb::new(1.0, 1.0, 1.0) * (1.0 - t) + Rgb::new(0.5, 0.7, 1.0) * t
+                Rgb::new(1.0, 1.0, 1.0) * (1.0 - t) + Rgb::new(0.5, 0.7, 1.0) * t
             }
         }
     }
@@ -72,7 +72,7 @@ impl Ray {
     // iterating through the objects keeping track of the lowest t value for returned HitRecords.
     fn get_obj_closest_intersection(
         self,
-        world: &Vec<Hittables>
+        world: &[Hittables]
     ) -> Option<HitRecord> {
     
         let mut temp_rec = None;
