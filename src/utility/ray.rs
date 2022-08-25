@@ -41,7 +41,7 @@ impl Ray {
     /// * `world` - A reference to a vector of 'Hittables' enums representing in world objects
     /// * `depth` - The limit of recursion (light bounces) 
     /// 
-    pub fn cast_ray(self, world: &Vec<Hittables>, depth: u32) -> Rgb {
+    pub fn cast_ray(self, world: &[Hittables], depth: u32) -> Rgb {
 
         // Depth of recursion has been reached, representing a fully absorbed light ray (black shadow).
         if depth == 0 {
