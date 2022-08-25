@@ -1,4 +1,5 @@
 # set the rendered image dimensions
+# NOTE: must be 16:9 aspect ratio
 image_width = 1920
 image_height = 1080
 # amount of ray samples to take for a pixel
