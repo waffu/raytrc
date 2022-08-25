@@ -1,5 +1,5 @@
 # waytracer
-waytracer is a Rust port of the C++ raytracer described in Ray Tracing in One Weekend with additional features such as multi-threaded ray calculations, logging and PNG output.
+waytracer is a Rust port of the C++ raytracer described in Ray Tracing in One Weekend with additional features such as multi-threaded ray calculations, logging, PNG output and configuration files.
 
 # Usage
 
